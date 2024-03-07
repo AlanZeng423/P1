@@ -6,14 +6,14 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import pandas as pd
 # 读取CSV文件
-df_server = pd.read_csv('server_data.csv')
-df_1 = pd.read_csv('model_1.csv')
-df_2 = pd.read_csv('model_2.csv')
-df_3 = pd.read_csv('model_3.csv')
-df_4 = pd.read_csv('model_4.csv')
-df_5 = pd.read_csv('model_5.csv')
-df_6 = pd.read_csv('model_6.csv')
-df_edge = pd.read_csv('edge.csv')
+df_server = pd.read_csv('../data/server_data.csv')
+df_1 = pd.read_csv('../data/model_1.csv')
+df_2 = pd.read_csv('../data/model_2.csv')
+df_3 = pd.read_csv('../data/model_3.csv')
+df_4 = pd.read_csv('../data/model_4.csv')
+df_5 = pd.read_csv('../data/model_5.csv')
+df_6 = pd.read_csv('../data/model_6.csv')
+df_edge = pd.read_csv('../data/edge.csv')
 # 假设CSV文件中的列名分别是'Longitude'和'Latitude'
 locations = df_server[['Longitude', 'Latitude']].values.tolist()
 # print(locations)

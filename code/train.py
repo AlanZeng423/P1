@@ -1,7 +1,8 @@
 import torch
 import numpy as np
 from torch_geometric.data import Data
-from graphModeling import Node_matrix, edge, edge_features
+# from graphModeling import Node_matrix, edge, edge_features
+from data import Node_matrix, edge, edge_features
 from torch_geometric.nn import GCNConv
 import torch.optim as optim
 import torch.nn.functional as F
