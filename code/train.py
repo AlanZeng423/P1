@@ -5,6 +5,7 @@ from graphModeling import Node_matrix, edge, edge_features
 from torch_geometric.nn import GCNConv
 import torch.optim as optim
 import torch.nn.functional as F
+from queue import PriorityQueue
 
 # 数据预处理
 Node_matrix = Node_matrix.astype(np.float64)
@@ -66,4 +67,101 @@ for epoch in range(200):
     if epoch % 10 == 0:
         print(f'Epoch {epoch}: Loss {loss.item()}')
 
+
+# After training, we can use the model to make predictions
+model.eval()  # 将模型设置为评估模式
+with torch.no_grad():
+    node_embeddings = model(data.x, data.edge_index) #
+# node_embeddings是节点的嵌入表示，可以用于后续任务，如节点分类、链接预测等
+    
+
+
+# def heuristic(node, target_node, node_embeddings):
+#     # 使用节点表示的欧氏距离作为启发式的估计
+#     return torch.norm(node_embeddings[node] - node_embeddings[target_node], p=2).item()
+
+# from queue import PriorityQueue
+
+# def a_star_search(start_node, goal_node, graph, node_embeddings):
+#     frontier = PriorityQueue()
+#     frontier.put((0, start_node))
+#     came_from = {start_node: None}
+#     cost_so_far = {start_node: 0}
+    
+#     while not frontier.empty():
+#         current = frontier.get()[1]
+        
+#         if current == goal_node:
+#             break
+        
+#         for next in graph.neighbors(current):
+#             new_cost = cost_so_far[current] + graph[current][next].get('weight', 1)  # Assume default weight=1 if not specified
+#             if next not in cost_so_far or new_cost < cost_so_far[next]:
+#                 cost_so_far[next] = new_cost
+#                 priority = new_cost + heuristic(next, goal_node, node_embeddings)
+#                 frontier.put((priority, next))
+#                 came_from[next] = current
+                
+#     # Reconstruct path
+#     current = goal_node
+#     path = []
+#     while current is not None:
+#         path.append(current)
+#         current = came_from.get(current, None)
+#     path.reverse()  # because we followed the path backwards
+#     return path
+    
+
+
+def create_adj_list(edge_index, edge_attr):
+    adj_list = {}
+    for i, (src, dest) in enumerate(edge_index.t()):
+        weight = edge_attr[i].item()
+        if src.item() not in adj_list:
+            adj_list[src.item()] = []
+        adj_list[src.item()].append((dest.item(), weight))
+    return adj_list
+
+
+from queue import PriorityQueue
+
+def heuristic(node, goal_node, node_embeddings):
+    return torch.norm(node_embeddings[node] - node_embeddings[goal_node], p=2).item()
+
+def a_star_search(start_node, goal_node, adj_list, node_embeddings):
+    frontier = PriorityQueue()
+    frontier.put((0, start_node))
+    came_from = {start_node: None}
+    cost_so_far = {start_node: 0}
+
+    while not frontier.empty():
+        current = frontier.get()[1]
+
+        if current == goal_node:
+            break
+
+        for next_node, weight in adj_list.get(current, []):
+            new_cost = cost_so_far[current] + weight
+            if next_node not in cost_so_far or new_cost < cost_so_far[next_node]:
+                cost_so_far[next_node] = new_cost
+                priority = new_cost + heuristic(next_node, goal_node, node_embeddings)
+                frontier.put((priority, next_node))
+                came_from[next_node] = current
+
+    # Reconstruct path
+    current = goal_node
+    path = []
+    while current is not None:
+        path.append(current)
+        current = came_from.get(current, None)
+    path.reverse()
+    return path
+
+
+
+
+adj_list = create_adj_list(data.edge_index, data.edge_attr)
+start_node, goal_node = 0, 5  # 示例起点和终点
+path = a_star_search(start_node, goal_node, adj_list, node_embeddings)
+print(f"Path from {start_node} to {goal_node}: {path}")
 
