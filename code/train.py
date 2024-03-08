@@ -77,43 +77,6 @@ with torch.no_grad():
     
 
 
-# def heuristic(node, target_node, node_embeddings):
-#     # 使用节点表示的欧氏距离作为启发式的估计
-#     return torch.norm(node_embeddings[node] - node_embeddings[target_node], p=2).item()
-
-# from queue import PriorityQueue
-
-# def a_star_search(start_node, goal_node, graph, node_embeddings):
-#     frontier = PriorityQueue()
-#     frontier.put((0, start_node))
-#     came_from = {start_node: None}
-#     cost_so_far = {start_node: 0}
-    
-#     while not frontier.empty():
-#         current = frontier.get()[1]
-        
-#         if current == goal_node:
-#             break
-        
-#         for next in graph.neighbors(current):
-#             new_cost = cost_so_far[current] + graph[current][next].get('weight', 1)  # Assume default weight=1 if not specified
-#             if next not in cost_so_far or new_cost < cost_so_far[next]:
-#                 cost_so_far[next] = new_cost
-#                 priority = new_cost + heuristic(next, goal_node, node_embeddings)
-#                 frontier.put((priority, next))
-#                 came_from[next] = current
-                
-#     # Reconstruct path
-#     current = goal_node
-#     path = []
-#     while current is not None:
-#         path.append(current)
-#         current = came_from.get(current, None)
-#     path.reverse()  # because we followed the path backwards
-#     return path
-    
-
-
 def create_adj_list(edge_index, edge_attr):
     adj_list = {}
     for i, (src, dest) in enumerate(edge_index.t()):
@@ -127,6 +90,7 @@ def create_adj_list(edge_index, edge_attr):
 from queue import PriorityQueue
 
 def heuristic(node, goal_node, node_embeddings):
+    print (f"node_embeddings[node]: {node_embeddings[node]}")
     return torch.norm(node_embeddings[node] - node_embeddings[goal_node], p=2).item()
 
 def a_star_search(start_node, goal_node, adj_list, node_embeddings):
@@ -162,7 +126,8 @@ def a_star_search(start_node, goal_node, adj_list, node_embeddings):
 
 
 adj_list = create_adj_list(data.edge_index, data.edge_attr)
-start_node, goal_node = 0, 5  # 示例起点和终点
+print(f"adj_list: {adj_list}")
+start_node, goal_node = 0, 2  # 示例起点和终点
 path = a_star_search(start_node, goal_node, adj_list, node_embeddings)
-print(f"Path from {start_node} to {goal_node}: {path}")
+print(f"Path from {start_node} t                                                                                                                                              o {goal_node}: {path}")
 

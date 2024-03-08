@@ -161,7 +161,7 @@ edge = edge.astype(np.float64)
 edge_features = edge_features.astype(np.float64)
 # 创建data
 data = Data(x=torch.tensor(Node_matrix, dtype=torch.float),
-            edge_index=torch.tensor(edge, dtype=torch.float),
+            edge_index=torch.tensor(edge, dtype=torch.long),
             edge_attr=torch.tensor(edge_features, dtype=torch.float),
             y=torch.tensor(Y,dtype=torch.int),
             train_mask=torch.tensor(train_mask,dtype=torch.bool))
